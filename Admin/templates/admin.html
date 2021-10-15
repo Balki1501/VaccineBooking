@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="shortcut icon" type="image/png" href="https://img-premium.flaticon.com/png/512/3027/3027579.png?token=exp=1623585738~hmac=ec950d408c018a3967dc5bbf0fc4588b"/>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/login.css') }}">
+   <link rel="preconnect" href="https://fonts.gstatic.com">
+   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <form action="/admin" method="POST" >
+    <div class="card">
+        <p class="login">LOGIN</p>
+        <div class="credentials"><label for="USERID" class="label">User ID</label><input type="text" placeholder="Enter the login id" name="userId" required>
+        </div><br></br>
+        <div class="credentials"><label for="PWD" class="label">Password</label><input type="password" name="password" placeholder="Enter the password" required>
+        </div><br></br>
+        <div class="buttons"><button class="submit" type="submit">SUBMIT</button> <button class="clear" type="reset" >CLEAR</button></div>
+    </div>
+    </form>
+</body>
+</html>
+

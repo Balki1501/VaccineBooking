@@ -1,0 +1,63 @@
+* {
+  font-family: Roboto;
+}
+.card {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+  margin-bottom: 100px;
+  border-spacing: 15px;
+  border-radius: 20px;
+  background-color: #ffffff;
+  border: none;
+}
+.card {
+  padding: 25px;
+  box-shadow: 6px 6px 4px rgba(0, 0, 0, 0.25);
+}
+.heading {
+  font-size: 24px;
+  font-weight: Bold;
+  align-content: center;
+}
+
+body {
+  background-color: #d98cfd;
+}
+#name,
+#age,
+#Phno,
+#email {
+  border-radius: 5px;
+  border: none;
+  background-color: #f7e5ff;
+  width: 200px;
+  height: 30px;
+}
+#address {
+  border-radius: 5px;
+  border: none;
+  background-color: #f7e5ff;
+  width: 200px;
+}
+button {
+  color: #ffffff;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+  width: 90px;
+  height: 30px;
+  margin-right: 200px;
+  margin-left: 50px;
+}
+
+td {
+  text-align: left;
+}
+#submit {
+  background-color: #0fb67a;
+}
+#reset {
+  background-color: black;
+}

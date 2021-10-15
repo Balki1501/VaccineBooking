@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vaccineBooker</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="shortcut icon" type="image/png" href="https://img-premium.flaticon.com/png/512/3027/3027579.png?token=exp=1623585738~hmac=ec950d408c018a3967dc5bbf0fc4588b"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/styles.css') }}">
+</head>
+<body >
+<form action="/form" method="POST" >
+<table class="card">
+<th colspan="2" ><p class="heading">Booking for vaccination</p></th>
+<tr><td>Name</td><td><input type="text" id="name" name="name" placeholder="Enter your name" required></td></tr>
+<tr><td>Age</td><td><input type="number" id="age" name="age" placeholder="Enter your age" required></td></tr>
+<tr><td>Address</td><td><textarea id="address" name="address" rows="5" cols="20" required placeholder="Enter your address"></textarea></td></tr>
+<tr><td>Dosage of vaccine</td><td>
+ Dose 1<input type="radio" onclick="javascript:yesnoCheck();" name="dose" value="1" id="noCheck">
+    Dose 2<input type="radio" onclick="javascript:yesnoCheck();" name="dose" value="2" id="yesCheck">
+    <br>
+    <div id="ifYes" style="visibility:hidden">
+        <p>If Dose 2,
+        How many days before 
+        you had the first dose?</p><input type='number' name="days" id='yes'>
+        <p id="res"></p>
+        <br>
+        </div>
+        </td>
+        </tr>
+<tr><td>Phone number</td><td><input type="text" id="Phno" name="phno" placeholder="Enter your mobile number" pattern="[0-9]{10}" required></td></tr>
+<tr><td>Email id</td><td><input type="email" id="email" name="email" placeholder="Enter your email id"  required></td></tr>
+<tr><td><button type="submit" id="submit"  >Submit</button>
+<td><button type="reset" id="reset" >Clear</button></td></tr>
+</table>
+</form>
+<script src="{{url_for('static', filename='script.js')}}"></script>
+</body>
+</html>

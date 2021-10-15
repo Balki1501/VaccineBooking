@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Dashboard</title>
+    <link rel="shortcut icon" type="image/png" href="https://img-premium.flaticon.com/png/512/3027/3027579.png?token=exp=1623585738~hmac=ec950d408c018a3967dc5bbf0fc4588b"/>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+
+</head>
+<style>
+    a
+    {
+        color:blue;
+        font-size:24px;
+    }
+    </style>
+<body>
+    <nav><h3>Dashboard</h3></nav>
+    <section class="cards">
+        <div class="card"><p id="txt">Available</p><br><h1>250</h1></div>
+        <div class="card"><p id="txt">No of people applied</p>
+            <br>
+            <h1>
+                {{count}}
+            </h1>
+        </div>
+    </section>
+    <br>
+    <br>
+    <br>
+    <br>
+    <section class="table">
+         <table>   
+        
+        <tr>
+            <td><p>Name</p></td>
+            <td><p>Age</p></td>
+            <td><p>Dose</p></td>
+            <td><p>Days</p></td>
+            <td></td>
+        </tr>
+
+        <!-- submitted people deatils -->
+        {% for i in Details %}
+        <tr>
+            <td >{{i[0]}}</td> 
+            <td >{{i[1]}}</td>
+            <td >{{i[2]}}</td>
+            <td >{{i[3]}}</td>
+            <td><form action="sendMail" method="POST"><button id="send-btn" name="send" type="submit" value="{{i[4]}}" >Send Email</button></form></td>
+
+        {% endfor %}
+        </tr>
+        </table>
+    </section>
+    
+</body>
+</html>
