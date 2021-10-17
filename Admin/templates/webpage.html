@@ -17,22 +17,15 @@
 <table class="card">
 <th colspan="2" ><p class="heading">Booking for vaccination</p></th>
 <tr><td>Name</td><td><input type="text" id="name" name="name" placeholder="Enter your name" required></td></tr>
-<tr><td>Age</td><td><input type="number" id="age" name="age" placeholder="Enter your age" required></td></tr>
-<tr><td>Address</td><td><textarea id="address" name="address" rows="5" cols="20" required placeholder="Enter your address"></textarea></td></tr>
-<tr><td>Dosage of vaccine</td><td>
- Dose 1<input type="radio" onclick="javascript:yesnoCheck();" name="dose" value="1" id="noCheck">
-    Dose 2<input type="radio" onclick="javascript:yesnoCheck();" name="dose" value="2" id="yesCheck">
-    <br>
-    <div id="ifYes" style="visibility:hidden">
-        <p>If Dose 2,
-        How many days before 
-        you had the first dose?</p><input type='number' name="days" id='yes'>
-        <p id="res"></p>
-        <br>
-        </div>
+<tr><td>Vaccine name</td><td><input type="text" id="age" name="vaccineName" placeholder="Enter the name of the vaccine" required></td></tr>
+<tr><td>Address</td><td><textarea id="address" name="address" rows="5" cols="20"  placeholder="Enter your address" required></textarea></td></tr>
+<tr><td>Dosage of vaccine</td><td>  
+ Dose 1<input type="radio" name="dose" value="1" id="noCheck">
+    Dose 2<input type="radio" name="dose" value="2" id="yesCheck">
         </td>
         </tr>
-<tr><td>Phone number</td><td><input type="text" id="Phno" name="phno" placeholder="Enter your mobile number" pattern="[0-9]{10}" required></td></tr>
+        <tr><td>If Dose 2 Enter the date</td><td><input type="date" id="email" name="date" placeholder="Enter the dose 1 date"  ></td></tr>
+<tr><td>Phone number</td><td><input type="text" id="Phno" name="phNo" placeholder="Enter your mobile number" pattern="[0-9]{10}" required></td></tr>
 <tr><td>Email id</td><td><input type="email" id="email" name="email" placeholder="Enter your email id"  required></td></tr>
 <tr><td><button type="submit" id="submit"  >Submit</button>
 <td><button type="reset" id="reset" >Clear</button></td></tr>

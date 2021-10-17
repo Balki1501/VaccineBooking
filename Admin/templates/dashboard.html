@@ -21,7 +21,7 @@
 <body>
     <nav><h3>Dashboard</h3></nav>
     <section class="cards">
-        <div class="card"><p id="txt">Available</p><br><h1>250</h1></div>
+        <div class="card"><p id="txt">Available</p><br><h1>{{Available}}</h1></div>
         <div class="card"><p id="txt">No of people applied</p>
             <br>
             <h1>
@@ -38,10 +38,9 @@
         
         <tr>
             <td><p>Name</p></td>
-            <td><p>Age</p></td>
+            <td><p>Vaccine Name</p></td>
             <td><p>Dose</p></td>
-            <td><p>Days</p></td>
-            <td></td>
+            <td><p>Send mail</p></td>
         </tr>
 
         <!-- submitted people deatils -->
@@ -50,8 +49,8 @@
             <td >{{i[0]}}</td> 
             <td >{{i[1]}}</td>
             <td >{{i[2]}}</td>
-            <td >{{i[3]}}</td>
-            <td><form action="sendMail" method="POST"><button id="send-btn" name="send" type="submit" value="{{i[4]}}" >Send Email</button></form></td>
+            <td>
+        <form action="sendMail" method="POST"><button id="send-btn" name="send" type="submit" value="{{i[3]}}" >Send Email</button></form></td>
 
         {% endfor %}
         </tr>

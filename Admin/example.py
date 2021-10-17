@@ -3,10 +3,17 @@ from flask.helpers import url_for
 from flask_mysqldb import MySQL  # to use db
 from flask_mail import Mail, Message
 from decouple import config
+from datetime import date,datetime
+
 # API_USERNAME = config('USER')
 # API_KEY = config('KEY')
-r=[]
-Available=250
+
+#Username: oZiRCgiTkx
+
+#Database name: oZiRCgiTkx
+
+#Password: jDCJtx0I32
+Available=100
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = "remotemysql.com"  # remote.mysql
 # if remotemysql give user 📛 *see credentials while creating db
@@ -22,36 +29,53 @@ def home():
     return render_template("webpage.html")
 
 
-@app.route('/form', methods=['POST'])
+@app.route('/form', methods=['POST','GET'])
 def form():
     # name, age, address, phno, email, days = "", 0, "", 0, "", 0
     if request.method == 'POST':
         name = request.form["name"]
-        age = request.form["age"]
+       # age = request.form["age"]
         address = request.form["address"]
-        days = request.form["days"]
-        phno = request.form["phno"]
+        vaccineName=request.form["vaccineName"]
+        dose = request.form["dose"]  # 1 or 2
+        phno = request.form["phNo"]
         email = request.form["email"]
-        if(days == ""):
-            days = 0
-            p = (name, age, address, days, phno, email)
+        date1 = request.form["date"]
+        if(dose == "1"):
+            p = (name, vaccineName, address, phno, email)
             cursor = mysql.connection.cursor()
             print("connected to remotemysql")
             cursor.execute(
-                    'INSERT INTO Details(name,age,address,days,phno,email) VALUES (%s,%s,%s,%s,%s,%s)', p)
+                    'INSERT INTO Consumer(id,name,vaccineName,address,phNo,email) VALUES (NULL,%s,%s,%s,%s,%s)', p)
                 
             msg="Thank you for availing the Vaccine. We'll reach you soon via the Mail-id."
         else:
-            days = days
-            if int(days)>=84:
-                p = (name, age, address, days, phno, email)
+            cursor=mysql.connection.cursor()
+            today = date.today()
+            date_format = "%Y-%m-%d"
+            a = datetime.strptime(date1, date_format)
+            b = datetime.strptime(str(today), date_format)
+            fro=(b-a).days
+            cursor.execute("select Dosage from VaccineDetails where VaccineName='%s'"%vaccineName)
+            d=cursor.fetchall()
+            print(d)
+
+            for i in d:
+                for j in i:
+                    if i!="":
+                        print(j)
+                        to=j
+            if fro>to:
+                p = (name, vaccineName,date1, address, phno, email)
+                
                 cursor = mysql.connection.cursor()
                 print("connected to remotemysql")
                 cursor.execute(
-                    'INSERT INTO Details(name,age,address,days,phno,email) VALUES (%s,%s,%s,%s,%s,%s)', p)
+                    'INSERT INTO Consumer(id,name,vaccineName,dateOfDose1,address,phNo,email) VALUES (NULL,%s,%s,%s,%s,%s,%s)', p)
+               
                 msg="Thank you for availing the Vaccine. We'll reach you soon via the Mail-id."
             else:
-                msg="We are sorry to inform you that You'll need to wait for another "+str(84-int(days))+" days to avail the second dose of the vaccine."
+                msg="We are sorry to inform you that You'll need to wait for another "+str(to-int(fro))+" days to avail the second dose of the vaccine."
         mysql.connection.commit()
       
     return render_template("a.html",msg=msg)
@@ -76,21 +100,26 @@ def admin():
 @app.route('/dashboard')
 def dashboard():
     cursor=mysql.connection.cursor()
-    cursor.execute('SELECT name,age,CASE when days>84 then 2 else 1 end as dose,days,email FROM Details ')
+    cursor.execute('SELECT name,vaccineName,CASE when (dateOfDose1 IS NULL) then 1 else 2 end as dose,email FROM Consumer where dateOfDose2 IS NULL')
     count = 0
     mysql.connection.commit()
     Details = cursor.fetchall()
     count=len(Details)
-    return render_template("dashboard.html", Details=Details, count=count)
+    return render_template("dashboard.html", Details=Details, count=count,Available=Available)
 
 @app.route("/sendMail",methods=['GET','POST'])
 def sendMail():
-    global r
-    if r!=[]:                                                   #This is to make sure there is only one recipient email
-        del r[0]
     if request.method=="POST":
         re=request.form["send"]                                 #Get the data from the form(Email)
-        r.append(re)
+        cursor=mysql.connection.cursor()
+        cursor.execute("SELECT name,vaccineName,CASE when (dateOfDose1 IS NULL) then 1 else 2 end as dose,email FROM Consumer where email='%s' "%re)
+        Details = cursor.fetchall()
+        d=[]
+        for i in Details:
+                for j in i:
+                    if j!="":
+                        d.append(j)
+
         sender_mail="balakrishnan1may01@gmail.com"
         app.config['MAIL_SERVER']='smtp.gmail.com'
         app.config['MAIL_PORT'] = 465
@@ -100,19 +129,23 @@ def sendMail():
         app.config['MAIL_USE_SSL'] = True
         mail = Mail(app)                                        # instantiate the mail class
         msg = Message(
-            'Hello',
+            'Vaccination',
             sender=sender_mail,
-            recipients=r
+            recipients=[re]
         )
-        msg.body = 'Hi Ena panra???'
-        mail.send(msg)                                           #End of code to send Email
-    cursor=mysql.connection.cursor()                             #Connect to the server
-    cursor.execute("delete from Details where email = '%s';"%re) #To remove record from the server
-    mysql.connection.commit()    
-    print("Record deleted")   
-    global Available
-    Available-=1
-    return redirect(url_for("dashboard"))                        #To redirect to the same page
+        msg.body = 'You have been alloted with a slot For getting you vaccinated at XYZ hospital,Coimbatore.'
+        #mail.send(msg)                                           #End of code to send Email
+        cursor=mysql.connection.cursor()                             #Connect to the server
+        today = date.today()
+        if d[2]==1:
+            cursor.execute("update Consumer set dateOfDose1='%s-%s-%s' where email='%s'"%(today.year,today.month,today.day,str(d[3]))) #To add current date as dosage date
+        else:
+            cursor.execute("update Consumer set dateOfDose2='%s-%s-%s' where email='%s'"%(today.year,today.month,today.day,str(d[3]))) #To add current date as dosage date
+            
+        mysql.connection.commit()  
+        global Available
+        Available-=1
+        return redirect(url_for("dashboard"))                        #To redirect to the same page
 
 
 if __name__ == '__main__':

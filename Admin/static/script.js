@@ -7,5 +7,3 @@ function yesnoCheck() {
     {document.getElementById('ifYes').style.visibility = 'hidden';
 }
 }
-
-
