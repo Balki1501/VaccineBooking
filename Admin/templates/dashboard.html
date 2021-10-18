@@ -19,9 +19,10 @@
     }
     </style>
 <body>
-    <nav><h3>Dashboard</h3></nav>
+    <nav><a href={{url_for('dashboard')}}><h3>Dashboard</h3></a><a href={{url_for('addStock')}}><h3>Add Stock</h3></a></nav>
     <section class="cards">
-        <div class="card"><p id="txt">Available</p><br><h1>{{Available}}</h1></div>
+        <div class="card"><p id="txt">Covaxin</p><br><h1>{{Covaxin}}</h1></div>
+        <div class="card"><p id="txt">Covishield</p><br><h1>{{Covishield}}</h1></div>
         <div class="card"><p id="txt">No of people applied</p>
             <br>
             <h1>
@@ -50,7 +51,7 @@
             <td >{{i[1]}}</td>
             <td >{{i[2]}}</td>
             <td>
-        <form action="sendMail" method="POST"><button id="send-btn" name="send" type="submit" value="{{i[3]}}" >Send Email</button></form></td>
+        <form action="sendMail" method="POST"><button id="send-btn" name="send" type="submit" value="{{i[4]}}" >Send Email</button></form></td>
 
         {% endfor %}
         </tr>

@@ -13,6 +13,7 @@ from datetime import date,datetime
 #Database name: oZiRCgiTkx
 
 #Password: jDCJtx0I32
+
 Available=100
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = "remotemysql.com"  # remote.mysql
@@ -46,7 +47,7 @@ def form():
             cursor = mysql.connection.cursor()
             print("connected to remotemysql")
             cursor.execute(
-                    'INSERT INTO Consumer(id,name,vaccineName,address,phNo,email) VALUES (NULL,%s,%s,%s,%s,%s)', p)
+                    'INSERT INTO consumer(id,name,vaccineName,address,phNo,email) VALUES (NULL,%s,%s,%s,%s,%s)', p)
                 
             msg="Thank you for availing the Vaccine. We'll reach you soon via the Mail-id."
         else:
@@ -56,7 +57,7 @@ def form():
             a = datetime.strptime(date1, date_format)
             b = datetime.strptime(str(today), date_format)
             fro=(b-a).days
-            cursor.execute("select Dosage from VaccineDetails where VaccineName='%s'"%vaccineName)
+            cursor.execute("select Dosage from vaccineDetails where vaccineName='%s'"%vaccineName)
             d=cursor.fetchall()
             print(d)
 
@@ -71,7 +72,7 @@ def form():
                 cursor = mysql.connection.cursor()
                 print("connected to remotemysql")
                 cursor.execute(
-                    'INSERT INTO Consumer(id,name,vaccineName,dateOfDose1,address,phNo,email) VALUES (NULL,%s,%s,%s,%s,%s,%s)', p)
+                    'INSERT INTO consumer(id,name,vaccineName,dateOfDose1,address,phNo,email) VALUES (NULL,%s,%s,%s,%s,%s,%s)', p)
                
                 msg="Thank you for availing the Vaccine. We'll reach you soon via the Mail-id."
             else:
@@ -100,26 +101,34 @@ def admin():
 @app.route('/dashboard')
 def dashboard():
     cursor=mysql.connection.cursor()
-    cursor.execute('SELECT name,vaccineName,CASE when (dateOfDose1 IS NULL) then 1 else 2 end as dose,email FROM Consumer where dateOfDose2 IS NULL')
+    cursor.execute('Select vaccineName,stock from vaccineDetails order by vaccineName')
+    s=cursor.fetchall()
+    Covishield=s[1][1]
+    Covaxin=s[0][1]
+    cursor.execute('SELECT name,vaccineName,CASE when (dateOfDose1 IS NULL) then 1 else 2 end as dose,email,id FROM consumer where name not in (select name from fullyVaccinated)')
     count = 0
     mysql.connection.commit()
     Details = cursor.fetchall()
     count=len(Details)
-    return render_template("dashboard.html", Details=Details, count=count,Available=Available)
+    return render_template("dashboard.html", Details=Details, count=count,Covaxin=Covaxin,Covishield=Covishield)
 
 @app.route("/sendMail",methods=['GET','POST'])
 def sendMail():
     if request.method=="POST":
-        re=request.form["send"]                                 #Get the data from the form(Email)
+        id=request.form["send"]                               #Get the data from the form(Email)
         cursor=mysql.connection.cursor()
-        cursor.execute("SELECT name,vaccineName,CASE when (dateOfDose1 IS NULL) then 1 else 2 end as dose,email FROM Consumer where email='%s' "%re)
+        id=int(id)
+        cursor.execute('SELECT email FROM consumer where id=%d'%id)
+        a=cursor.fetchall()
+        re=a[0][0]
+        cursor.execute("SELECT name,vaccineName,CASE when (dateOfDose1 IS NULL) then 1 else 2 end as dose,email FROM consumer where id=%d "%id)
         Details = cursor.fetchall()
         d=[]
         for i in Details:
                 for j in i:
                     if j!="":
                         d.append(j)
-
+        print(d)
         sender_mail="balakrishnan1may01@gmail.com"
         app.config['MAIL_SERVER']='smtp.gmail.com'
         app.config['MAIL_PORT'] = 465
@@ -138,15 +147,30 @@ def sendMail():
         cursor=mysql.connection.cursor()                             #Connect to the server
         today = date.today()
         if d[2]==1:
-            cursor.execute("update Consumer set dateOfDose1='%s-%s-%s' where email='%s'"%(today.year,today.month,today.day,str(d[3]))) #To add current date as dosage date
-        else:
-            cursor.execute("update Consumer set dateOfDose2='%s-%s-%s' where email='%s'"%(today.year,today.month,today.day,str(d[3]))) #To add current date as dosage date
+            cursor.execute("update consumer set dateOfDose1='%s-%s-%s' where id=%d"%(today.year,today.month,today.day,id)) #To add current date as dosage date
             
+        else:
+            cursor.execute("update consumer set dateOfDose2='%s-%s-%s' where id=%d"%(today.year,today.month,today.day,id)) #To add current date as dosage date
+        cursor.execute("update vaccineDetails set stock = stock -1 where vaccineName= '%s'"%(d[1]))
+        cursor.execute("insert into fullyVaccinated(name,vaccineName,phNo,email) select name,vaccineName,phNo,email from consumer where dateOfDose1 is not null and dateOfDose2 is not null and id=%d"%id)
         mysql.connection.commit()  
-        global Available
-        Available-=1
+        
         return redirect(url_for("dashboard"))                        #To redirect to the same page
 
+@app.route('/addStock')
+def addStock():
+    return render_template("addStock.html")
+
+@app.route('/update',methods=["POST","GET"])
+def update():
+    if request.method=="POST":
+        vaccineName=request.form["vaccineName"]
+        amount=request.form["amount"]
+        print(amount)
+        cursor=mysql.connection.cursor()
+        cursor.execute("update vaccineDetails set stock=stock+%d where vaccineName='%s'"%(int(amount),vaccineName))
+        mysql.connection.commit() 
+        return redirect(url_for("dashboard"))
 
 if __name__ == '__main__':
     app.run(debug=True)  # debug true will automatically re run the server 😇  

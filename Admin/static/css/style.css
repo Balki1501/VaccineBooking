@@ -8,6 +8,8 @@ body {
   background: #090e3d;
 }
 nav {
+  display: flex;
+  align-items: flex-start;
   height: 40px;
   width: 100%;
   font-size: 20px;
@@ -18,6 +20,7 @@ nav {
   color: #2353b1;
 }
 h3 {
+  color:white;
   padding: 5px 0px 0px 15px;
 }
 h1 {

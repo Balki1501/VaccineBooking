@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Dashboard</title>
+    <link rel="shortcut icon" type="image/png" href="https://img-premium.flaticon.com/png/512/3027/3027579.png?token=exp=1623585738~hmac=ec950d408c018a3967dc5bbf0fc4588b"/>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+
+</head>
+<style>
+    a
+    {
+        color:blue;
+        font-size:24px;
+    }
+    p 
+    {
+        color:white;
+        font-size:24px;   
+    }
+    </style>
+<body>
+    <nav><a href={{url_for('dashboard')}}><h3>Dashboard</h3></a>
+        <a href={{url_for('addStock')}}><h3>Add Stock</h3></a></nav>
+            <section class="cards">
+                <form action="update" method="POST">
+                    <div>
+                        <p><input type="radio" id="vaccineName" name="vaccineName" value="covaxin" id="noCheck">Covaxin<input type="radio" id="vaccineName" name="vaccineName" value="covishield" id="yesCheck">Covishield
+                            <input type="number" id="amount" name="amount" placeholder="Enter the amount of vaccine recieved from distributor"></p> 
+                        <button id="send-btn" name="send" type="submit" >Add to Stock</button>
+                    </form>
+                </section>
+                </body>
+                </html>
