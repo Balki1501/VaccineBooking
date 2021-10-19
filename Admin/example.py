@@ -59,12 +59,9 @@ def form():
             fro=(b-a).days
             cursor.execute("select Dosage from vaccineDetails where vaccineName='%s'"%vaccineName)
             d=cursor.fetchall()
-            print(d)
-
             for i in d:
                 for j in i:
-                    if i!="":
-                        print(j)
+                    if j!="":
                         to=j
             if fro>to:
                 p = (name, vaccineName,date1, address, phno, email)
@@ -105,7 +102,9 @@ def dashboard():
     s=cursor.fetchall()
     Covishield=s[1][1]
     Covaxin=s[0][1]
-    cursor.execute('SELECT name,vaccineName,CASE when (dateOfDose1 IS NULL) then 1 else 2 end as dose,email,id FROM consumer where name not in (select name from fullyVaccinated)')
+    cursor.execute(
+        "SELECT name,vaccineName,CASE when (dateOfDose1 IS NULL) then 1 else 2 end as dose,email,id FROM consumer where id not in (select id from fullyVaccinated) and id in (select id from consumer where DATEDIFF(CURRENT_DATE,consumer.dateOfDose1) between  21 and 100) or id in (select id from consumer where dateOfDose1 is NULL) order by vaccineName,dose")
+
     count = 0
     mysql.connection.commit()
     Details = cursor.fetchall()
@@ -128,7 +127,6 @@ def sendMail():
                 for j in i:
                     if j!="":
                         d.append(j)
-        print(d)
         sender_mail="balakrishnan1may01@gmail.com"
         app.config['MAIL_SERVER']='smtp.gmail.com'
         app.config['MAIL_PORT'] = 465
@@ -152,7 +150,7 @@ def sendMail():
         else:
             cursor.execute("update consumer set dateOfDose2='%s-%s-%s' where id=%d"%(today.year,today.month,today.day,id)) #To add current date as dosage date
         cursor.execute("update vaccineDetails set stock = stock -1 where vaccineName= '%s'"%(d[1]))
-        cursor.execute("insert into fullyVaccinated(name,vaccineName,phNo,email) select name,vaccineName,phNo,email from consumer where dateOfDose1 is not null and dateOfDose2 is not null and id=%d"%id)
+        cursor.execute("insert into fullyVaccinated(id,name,vaccineName,phNo,email) select id,name,vaccineName,phNo,email from consumer where dateOfDose1 is not null and dateOfDose2 is not null and id=%d"%id)
         mysql.connection.commit()  
         
         return redirect(url_for("dashboard"))                        #To redirect to the same page
@@ -166,7 +164,6 @@ def update():
     if request.method=="POST":
         vaccineName=request.form["vaccineName"]
         amount=request.form["amount"]
-        print(amount)
         cursor=mysql.connection.cursor()
         cursor.execute("update vaccineDetails set stock=stock+%d where vaccineName='%s'"%(int(amount),vaccineName))
         mysql.connection.commit() 
