@@ -103,7 +103,7 @@ def dashboard():
     Covishield=s[1][1]
     Covaxin=s[0][1]
     cursor.execute(
-        "SELECT name,vaccineName,CASE when (dateOfDose1 IS NULL) then 1 else 2 end as dose,email,id FROM consumer where id not in (select id from fullyVaccinated) and id in (select id from consumer where DATEDIFF(CURRENT_DATE,consumer.dateOfDose1) between  21 and 100) or id in (select id from consumer where dateOfDose1 is NULL) order by vaccineName,dose")
+        "SELECT name,vaccineName,CASE when (dateOfDose1 IS NULL) then 1 else 2 end as dose,email,id FROM consumer where id not in (select id from fullyVaccinated) and id in (select id from consumer where DATEDIFF(CURRENT_DATE,consumer.dateOfDose1) >(select dosage from vaccineDetails where vaccineDetails.vaccineName=consumer.vaccineName )) or id in (select id from consumer where dateOfDose1 is NULL) order by vaccineName,dose")
 
     count = 0
     mysql.connection.commit()
